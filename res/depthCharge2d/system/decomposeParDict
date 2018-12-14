@@ -14,13 +14,14 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-numberOfSubdomains 4;
+numberOfSubdomains 4;       // cantidad de cores a utilizar
 
-method          scotch;
+method          scotch;     // especifica metodo de paralizacion
 
 coeffs
 {
-    n           (1 4 1);
+    n           (1 4 1);    // la multiplicacion de los tres numeros debe
+                            // coincidir con el numberOfSubdomains.
     //delta       0.001; // default=0.001
     //order       xyz;   // default=xzy
 }
