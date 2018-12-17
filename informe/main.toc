@@ -1,0 +1,14 @@
+\select@language {spanish}
+\contentsline {part}{I\hspace {1em}Introducci\IeC {\'o}n}{3}
+\contentsline {part}{II\hspace {1em}Herramientas}{4}
+\contentsline {section}{\numberline {1}Hardware}{4}
+\contentsline {section}{\numberline {2}Software}{4}
+\contentsline {subsection}{\numberline {2.1}Software de resoluci\IeC {\'o}n num\IeC {\'e}rica}{4}
+\contentsline {subsection}{\numberline {2.2}Software de paralelizaci\IeC {\'o}n}{4}
+\contentsline {subsection}{\numberline {2.3}Software de medici\IeC {\'o}n de tiempo}{4}
+\contentsline {part}{III\hspace {1em}An\IeC {\'a}lisis preliminar}{5}
+\contentsline {section}{\numberline {3}Hardware}{5}
+\contentsline {section}{\numberline {4}Software}{5}
+\contentsline {part}{IV\hspace {1em}Casos de estudio}{7}
+\contentsline {part}{V\hspace {1em}Preparaci\IeC {\'o}n del entorno}{8}
+\contentsline {section}{\numberline {5}Caso distribuido}{8}
