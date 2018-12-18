@@ -234,6 +234,30 @@ Además se han creado 4 directorios nuevos, cada uno representando a un core dis
 La información a continuación es importante en el caso de querer analizar visualmente la información del problema y su respectiva subdivisión en subproblemas. Es una práctica muy recomendable.\\
 A continuación se ejecutará el comando \texttt{foamToVTK} en cada uno de los directorios de los procesadores, lo cual creará un directorio \texttt{VTK} que contendrá información de los subdominios para ser analizada con \texttt{paraView}.
 
+\begin{figure} 
+    \centering
+    \includegraphics[scale=0.5]{../res/imgs/image8.png}
+    \caption{\textbf{El problema elegido} En esta imagen se puede apreciar la geometría del problema elegido: dos líquidos immiscibles en un recipiente, y una burbuja en la parte inferior del mismo.}
+\end{figure}
+
+\begin{figure} 
+    \centering
+    \includegraphics[scale=0.5]{../res/imgs/image5.png}
+    \caption{\textbf{Subdivisión del problema }En esta figura se puede cómo se asigna un núcleo para cada parte de la figura.}
+\end{figure}
+
+\begin{figure} 
+    \centering
+    \includegraphics[scale=0.5]{../res/imgs/image3.png}
+    \caption{\textbf{Detalle de la discretización} En esta imagen se ve en detalle la discretización, cómo cada core se subdivide en 3200 celdas (eje $y$ dividido en 40, el $x$ en 30). Notar que para realizar las operaciones en el límite de las caras se necesita información de varios procesadores distintos: es importante no pasar por alto este detalle, ya que es la variable que juega en contra de la paralelización por traer consigo un costo comunicacional extra. En el hipotético caso de tener 3200 cores para resolver este problema, claramente la situación no escala, debido a que el costo comunicacional terminaría ocupando la mayor porción del tiempo.}
+\end{figure}
+
+\begin{figure} 
+    \centering
+    \includegraphics[scale=0.5]{../res/imgs/image6.png}
+    \caption{\textbf{Descomposición Jerárquica vs. Scotch} En esta descomposición se puede ver que existe una ligera modificación en cómo se asignan las caras y la distribución de celdas en cada uno de los cores. Este tipo de descomposición es ideal para usar cuando la geometría del problema no es simétrica como en el caso del ejemplo, donde le trata de asignar a cada core la misma cantidad de celdas y minimizar las caras entre estos en base a un algoritmo u estrategia.}
+\end{figure}
+
 % \lstinputlisting[caption={s.c}]{s.c}
 
 \end{document}
