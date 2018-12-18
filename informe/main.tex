@@ -9,10 +9,11 @@
 % to install algorithm2e pckg: sudo apt-get install texlive-science
 \usepackage[ruled, vlined, nofillcomment]{algorithm2e}
 \usepackage{float}
-%\usepackage{hyperref}
+\usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{framed}
 \usepackage{enumitem}
+\usepackage{svg}
 
 \geometry{
     a4paper,
@@ -258,6 +259,110 @@ A continuación se ejecutará el comando \texttt{foamToVTK} en cada uno de los d
     \caption{\textbf{Descomposición Jerárquica vs. Scotch} En esta descomposición se puede ver que existe una ligera modificación en cómo se asignan las caras y la distribución de celdas en cada uno de los cores. Este tipo de descomposición es ideal para usar cuando la geometría del problema no es simétrica como en el caso del ejemplo, donde le trata de asignar a cada core la misma cantidad de celdas y minimizar las caras entre estos en base a un algoritmo u estrategia.}
 \end{figure}
 
+\newpage
+\section{Ejecución}
+\subsection{Monocore}
+Para ejecutar el solver sin paralelismo, es suficiente con correr el comando \texttt{./Allrun}. El mismo se encarga de crear la malla de discretización y de correr el solver.
+\subsection{Multicore}
+Para la resolución con paralelismo se hace uso del MPI (Message Passing Interface) mediante el comando mpirun. Al mismo se le pasan flags indicando cantidad de procesadores y tipo de binding, tema que se cubrirá a continuación. Por un tema de prolijidad se sugiere redireccionar la salida del programa a un archivo log.
+
+\begin{lstlisting}[caption={Ejemplo de comando a ejecutar para resolver con paralelismo.}, captionpos=b]
+mpirun -np 4  compressibleInterFoam -parallel > log.6626
+\end{lstlisting}
+
+Al estar ejecutándose la simulación se puede ver el uso de cpu mediante comandos como \texttt{top} o \texttt{htop}: de acuerdo a la cantidad de procesadores que se haya decidido utilizar, se observa un uso cercano o igual al 100\% en las cpus en uso.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{../res/imgs/image7.png}
+    \caption{Detalle de ejecución de \texttt{top}} 
+\end{figure}
+\subsubsection{Bindings}
+El binding se setea mediante el flag --bind-to. Por defecto se hace --bind-to core, lo que asegura que un mismo proceso se corra siempre en el mismo procesador. Esto es positivo, ya que si el proceso se va cambiando de procesador, se pierde toda la información que el procesador haya guardado en sus registros o cache. Para desactivar esto, se usa --bind-to none.
+
+El flag --bycore asegura que procesos secuenciales de MPI corran en procesadores adyacentes.
+
+Lo esperado es que el binding incremente la performance, previniendo al sistema operativo mover procesos de un core a otro con el fin de balancear la carga.
+
+\newpage
+\section{Análisis de las ejecuciones}
+En esta sección se realizará un análisis basado en gráficos que permitan apreciar los distintos speedups obtenidos con las distintas configuraciones.
+
+Para el análisis se usará el tiempo real, ya que si bien contempla también tiempos no usados exclusivamente para el procesamiento, se la considera una medida más real debido al tiempo que se usa para comunicación. 
+
+Los speedup fueron calculados tomando como tiempo viejo el tiempo necesario para correr el solver en un único núcleo, ya que es el único caso que no hace uso del paralelismo y se quiere ver cómo se puede mejorar a partir de ese caso paralelizando el problema.
+
+\subsection{PC \#2}
+\begin{figure}[h!]
+    \includesvg[svgpath=../res/imgs/]{pc2cores2a4}
+    \caption{Speedups de PC 2: cantidad de núcleos entre 2 y 4.}
+\end{figure}
+En esta PC se puede observar que ya usando dos núcleos se obtiene un speedup de 53\% en el mejor de los casos. Este speedup que supera el 50\% es muy bueno considerando que duplicando la cantidad de núcleos el óptimo teórico tiene un tope de 100\%, el cual se sabe que es inalcanzable en la práctica. Notar de todas formas que hay un 14\% de diferencia con el speedup obtenido en el peor caso. Si bien un speedup de 39\% es de todas formas muy bueno, es evidente ya desde el principio que los distintos tipos de binding juegan un papel clave en el manejo de la paralelización. 
+
+En el caso de la corrida con 3 núcleos se observa que el mejor speedup fue alcanzado por dos de las tres técnicas de binding, logrando un speedup de 73\%. En este caso la diferencia con el peor speedup logrado es mucho menor, de tan solo 9\%. Sigue siendo, de todas formas, una diferencia significativa. A diferencia del caso anterior, se observa que se logra un cuarto del speedup óptimo teórico (300\%).
+
+Fue necesario ocupar 4 núcleos para alcanzar un speedup del 100\%. La relación entre el óptimo teórico y el mejor real es igual al caso anterior: se logra solamente un cuarto del máximo teórico (400\%). Además se puede ver nuevamente que el binding juega un papel no menor, ya que la diferencia entre mejor y peor caso utilizando 4 núcleos es del 27\%. 
+
+Como la PC en análisis cuenta con 8 subprocesos pero solamente 4 núcleos, será interesante ver los resultados de las mediciones subsiguientes. ¿Seguirá aumentando el speedup, o fue el máximo posible ya alcanzado?
+
+\begin{figure}[h!]
+    \includesvg[svgpath=../res/imgs/]{pc2cores5a8}
+    \caption{Speedups de PC 2: cantidad de núcleos entre 5 y 8.}
+\end{figure}
+A primera vista se puede ver que los speedups obtenidos son todos inferiores al mejor speedup obtenido con hasta 4 núcleos.
+
+En los casos de 5 y 6 núcleos casi no hay diferencia entre los distintos tipos de binding, mientras que en el caso de 7 núcleos, dependiendo del tipo de binding se puede obtener hasta un 21% de diferencia. 
+
+En el caso de los 5 núcleos se observa un speedup de entre el 76% y 82%. 
+
+En el caso de los 6 núcleos el speedup fue menor: en el mejor caso se alcanzó el 67% (peor caso: 62%). 
+
+Con 7 núcleos la variedad de resultados desorienta bastante: en el mejor de los casos, el speedup es casi igual al peor caso de los 5 núcleos (!).
+
+……
+
+De todas estas mediciones con 5 o más núcleos, se pueden rescatar las siguientes observaciones contraintuitivas: en primer lugar, el máximo speedup fue logrado con 5 núcleos, que es la menor cantidad de la muestra observada. Por otro lado, este speedup es muy similar al speedup obtenido con 3 núcleos, lo que significa que todos los speedups con 5 o más están muy por detrás del speedup obtenido con 4 núcleos.
+
+\subsection{PC \#3}
+\subsubsection{Descomposicion Jerarquica}
+\begin{figure}[H]
+    \includesvg[svgpath=../res/imgs/]{pc3Jerarquica}
+    \caption{Speedups de PC 3 con descomposición jerárquica}
+\end{figure}
+
+Con esta pc se puede ver que utilizando la descomposición jerárquica, ya usando solamente 2 núcleos se obtiene un excelente speedup, un poco mejor al 80\%, que es el 80\% del óptimo teórico posible: llama la atención, ya que no es común acercarse tanto al óptimo teórico. Notar, de todas formas, que si bien con dos tipos de binding se obtienen excelentes resultados, al usar bind to none by core, el speedup es muchísimo menor: solamente es del 30\%, teniendo un 50\% de diferencia con los otros dos tipos de binding (!). Indudablemente no es un detalle menor.
+
+Con 3 núcleos se observa un desempeño relativamente parejo entre los tres tipos de bindings, habiendo solamente un 7\% de diferencia entre los casos extremos. Sorprende un poco que el speedup no sólo no haya mejorado con respecto al caso de los dos núcleos, sino que ha empeorado alrededor del 10\%.
+
+En el caso de los 4 núcleos, los resultados son un tanto variables: en el mejor de los casos se obtiene un speedup del 75\%, mientras que en el peor de los casos el speedup obtenido es de 46\%, lo que hace una diferencia de 30\% entre los extremos. Nuevamente se observa que el speedup no supera al del caso de los 2 núcleos, y además es bastante parecido al obtenido con 3 núcleos. 
+
+Indudablemente, la descomposición jerárquica ha sorprendido un poco con los resultados obtenidos.
+
+\subsubsection{Descomposición Scotch}
+\begin{figure}[H]
+    \includesvg[svgpath=../res/imgs/]{pc3Scotch}
+    \caption{Speedups de PC 3 con descomposición scotch}
+\end{figure}
+En el caso de la descomposición scotch con dos núcleos se midió un speedup de entre 75\% y 80\%. Nuevamente, como se comentó en el caso de la descomposición jerárquica, dicho speedup es excelente considerando que el máximo teórico es del 100%. 
+
+Lamentablemente el speedup no sigue creciendo a medida que se agregan más núcleos: viendo los gráficos de 3 y 4 núcleos se puede ver que en ninguno de los casos se alcanza, con ninguno de los tres bindings posibles, el peor de los speedups obtenidos con solamente 2 núcleos.
+
+\subsubsection{Jerarquica vs Scotch}
+\begin{figure}[H]
+    \includesvg[svgpath=../res/imgs/]{pc3Scotch}
+    \caption{Speedups de PC 3 con descomposición scotch}
+\end{figure}
+Si bien se pueden observar pequeñas diferencias que en los tres casos favorecen a la descomposición Jerárquica, estas diferencias no son mayores. De todas formas toda la evidencia indica que es mejor trabajar con descomposición Jerárquica.
+
+\newpage
+\section{Conclusiones}
+A partir de las mediciones se puede ver que no siempre se cumple que al agregar más procesadores aumenta el speedup. Esto tiene que ver con cuestiones planteadas al principio del trabajo: el costo comunicacional consume tiempo, y si bien es subconscientemente subestimado debido a que el enfoque está en la parte computacional, termina siendo evidente que no es un tema menor. 
+
+Si bien en la PC 2 se pudo observar un speedup creciente a medida que se iba aumentando la cantidad de núcleos reales, no sucedió lo mismo con la PC 3, donde si bien no se esperaban valores exagerados e irreales que se acerquen demasiado al speedup óptimo teórico, sí se esperaba que aumente por lo menos un poco al agregar más núcleos para el cómputo.
+
+\section{Anexo}
+\subsection{Mediciones}
+\href{https://www.google.com/}{asdf}.
+La hoja de datos con las mediciones junto a los gráficos correspondientes están disponibles para una mejor apreciación en este \href{https://docs.google.com/spreadsheets/d/e/2PACX-1vQOSLYH4y81OxVleLZk2YwzFhrl4-AzE2-IUF04Y9lkk0pP6SZe1VFkkFW7r9lDK-Qo8OkGUuwHFlOE/pubhtml}{link}. 
 % \lstinputlisting[caption={s.c}]{s.c}
 
 \end{document}
