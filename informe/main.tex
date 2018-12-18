@@ -76,7 +76,7 @@
 
 % *** RESOLUCION ***
 
-\part{Introducción}
+\section{Introducción}
 
 La Dinámica de Fluidos (CFD por sus siglas en inglés) se usa para simular el flujo de fluidos en aplicaciones industriales. A medida que los simuladores se vuelven más complejos, el poder de cálculo que se requiere aumenta significativamente. En casos en que el tiempo de cómputo puede llevar días o meses, aún cambios relativamente pequeños en la eficiencia de cálculo pueden representar grandes mejoras en el cómputo.
 
@@ -87,8 +87,8 @@ Debido a la naturaleza de los cálculos de CFD, OpenFOAM requiere un nivel signi
 En el presente trabajo se realizaron varias mediciones que permiten apreciar el desempeño en varios escenarios.
 
 \newpage
-\part{Herramientas}
-\section{Hardware}
+\section{Herramientas}
+\subsection{Hardware}
 \begin{description}[align=right]
     \item [PC1] Intel Core i5-7200U 2.5 GHz with Turbo Boost up to 3.1 Ghz\\
         2 núcleos, 4 subprocesos.\\
@@ -103,14 +103,14 @@ En el presente trabajo se realizaron varias mediciones que permiten apreciar el 
         2 canales de memoria\\
         8 GB DDR4 memoria RAM 2400 MHz
 \end{description}
-\section{Software}
-\subsection{Software de resolución numérica}
+\subsection{Software}
+\subsubsection{Software de resolución numérica}
 El software utilizado para la resolución de problemas numéricos es OpenFOAM, un software de código abierto desarrollado por OpenCFD Ltd. desde 2004. Éste es utilizado en muchas áreas de ciencia e ingeniería, tanto en ámbitos comerciales como educativos. OpenFOAM presenta una amplia gama de características que le permite resolver una amplísima gama de problemas de fluidos, incluyendo pero no limitándose a reacciones químicas, turbulencias, transferencia de calor, acústica, mecánica de sólidos y electromagnetismo entre otros. 
 
-\subsection{Software de paralelización}
+\subsubsection{Software de paralelización}
 Para poder correr el solver en paralelo, se hace uso de mpirun (Open MPI) versión 1.10.2. 
 
-\subsection{Software de medición de tiempo}
+\subsubsection{Software de medición de tiempo}
 Debido a que el programa puede ser operado desde una terminal, las mediciones de las corridas se han podido realizar directamente mediante el comando time, obteniendo las siguientes mediciones: 
 \begin{description}[align=left]
     \item [Real:] mide el tiempo desde que arrancó a correr el programa hasta que terminó. Este tiempo incluye los time slices que el procesador está ocupado con otros procesos no relacionados con el programa de interés. Sin embargo, como esto siempre sucede en un sistema real\footnote{ Un sistema operativo siempre distribuye el tiempo de procesador de la mejor forma posible, y si bien puede haber tareas más importantes que otras, siempre habrá algunos procesos que requerirán algún tiempo de CPU, aunque el mismo sea mínimo, por lo que habrá ciclos de clock dedicados a tareas varias distintas a la medida.}, al haber hecho las mediciones corriendo solamente el software de interés sin otros procesos importantes de fondo, se puede considerar esta medición como buena.
@@ -119,8 +119,8 @@ Debido a que el programa puede ser operado desde una terminal, las mediciones de
 \end{description}
 
 \newpage
-\part{Análisis preliminar}
-\section{Hardware}
+\section{Análisis preliminar}
+\subsection{Hardware}
 Hay una variedad de factores de hardware que pueden afectar la eficiencia en el cálculo de CFD.
 \begin{description}
     \item [Velocidad de CPU/RAM:] se listan la velocidad de cores y velocidad de RAM de las PC utilizadas para las simulaciones, notando que OpenFoam es una aplicación de alto consumo de memoria, por ende se espera una mejor perfomance en aquellas RAM con mayor frecuencia de clock.
@@ -128,7 +128,7 @@ Hay una variedad de factores de hardware que pueden afectar la eficiencia en el 
     \item [Turbo boost:] la capacidad de overclockear el procesador con el fin de aumentar su frecuencia, es una  opción que puede maximizar la performance a un alto riesgo de dañar el CPU. Otra forma es utilizar el turbo, capacidad que solo tienen los chips Intel, que es una función designada a operar solo cuando unos pocos cores del CPU están siendo utilizados y el calor excedente producido por la disipacion de energia puede ser distribuido a lo largo del mecanismo de cooling del chip. Teóricamente, si todos los cores están siendo utilizados simultáneamente, el turbo boost no se activa.
     \item [Hyper-threading:] esta característica le permite a cada núcleo del CPU presentarse al sistema operativo como si fuesen dos, de los que uno será real y el otro virtual. Luego el SO puede asignar trabajos a los cores virtuales y asignarles trabajo cuando los cores reales están en idle (como por ejemplo esperando una lectura/escritura en memoria), de esta forma se maximiza la utilización del CPU. Sin embargo, OpenFoam es generalmente una aplicacion de uso intensivo de memoria: en raros casos durante una simulación CFD, la utilización de la CPU baja del 100\%, por lo tanto incrementar el número de procesos incrementará la comunicación, generando más overhead, en conclusión a priori se podría decir que este factor afectaría a cualquier beneficio de la utilización de cores virtuales, se espera demostrarlo en el presente trabajo.
 \end{description}
-\section{Software}
+\subsection{Software}
 \begin{description}
     \item [Binding and distribution:] el método por el cual los procesos que se ejecutan son alocados y limitados en los cores, tienen un impacto muy significativo en la velocidad del paralelismo, la proximidad de los procesos en la arquitectura de hardware afecta la velocidad y eficiencia del proceso de intercomunicación.
         En una computadora de escritorio la asignación de los procesos es provista por el scheduler del sistema operativo en uso, el cual hará lo necesario para balancear la carga y ejecutar los procesos de la mejor manera posible, a su vez esta tarea podría implicar mover procesos entre distintos cores, siempre con la intención de mejorar la performance. Las aplicaciones CFD asignan los datos discretos a cada proceso en paralelo que es guardado en la memoria de cada núcleo, si por alguna razón el SO decide mover el proceso a un core el cual en memoria no tiene los datos necesarios, la información debe ser reescrita en la memoria de este para que el trabajo pueda continuar; esto produce un efecto perjudicial a la performance.\\
@@ -149,13 +149,13 @@ Hay una variedad de factores de hardware que pueden afectar la eficiencia en el 
 \end{description}
 
 \newpage
-\part{Casos de estudio}
+\section{Casos de estudio}
 El software OpenFOAM incluye en su instalación una enorme cantidad de tutoriales a modo de ejemplo para los usuarios con el fin de demostrar la amplísima gama de problemas que se pueden resolver con el mismo. Debido a la complejidad de este tipo de problemas y por no ser el foco del presente trabajo, se decide trabajar con uno de los tutoriales que utiliza el \textit{compressibleInterFoam solver}, que es un solver para dos fluidos compresibles no isotérmicos e immiscibles usando el volumen del fluido.
 
 Entre las posibilidades de usar el caso 2D y el 3D, se decidió realizar pruebas con el 2D por un tema práctico: el caso 3D es computacionalmente muchísimo más complejo que el 2D, lo que extendería muchísimo el tiempo dedicado a correr el solver en sus distintas configuraciones posibles. Muy probablemente el estudio de los tiempo de ejecución y sus comparaciones serían más vistosos, pero dado el alcance del trabajo, se ha decidido que dicho límite es aceptable.
 
 \newpage
-\part{Preparación del entorno}
+\section{Preparación del entorno}
 El tutorial con el que se trabajó se encuentra en el directorio 
 
 \texttt{\$FOAM\_RUN/tutorials/multiphase/compressibleInterFoam/laminar/depthCharge2D}.\\
