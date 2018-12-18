@@ -277,9 +277,9 @@ Al estar ejecutándose la simulación se puede ver el uso de cpu mediante comand
     \caption{Detalle de ejecución de \texttt{top}} 
 \end{figure}
 \subsubsection{Bindings}
-El binding se setea mediante el flag --bind-to. Por defecto se hace --bind-to core, lo que asegura que un mismo proceso se corra siempre en el mismo procesador. Esto es positivo, ya que si el proceso se va cambiando de procesador, se pierde toda la información que el procesador haya guardado en sus registros o cache. Para desactivar esto, se usa --bind-to none.
+El binding se setea mediante el flag \texttt{--bind-to}. Por defecto se hace \texttt{--bind-to core}, lo que asegura que un mismo proceso se corra siempre en el mismo procesador. Esto es positivo, ya que si el proceso se va cambiando de procesador, se pierde toda la información que el procesador haya guardado en sus registros o cache. Para desactivar esto, se usa \texttt{--bind-to none}.
 
-El flag --bycore asegura que procesos secuenciales de MPI corran en procesadores adyacentes.
+El flag \texttt{--bycore} asegura que procesos secuenciales de MPI corran en procesadores adyacentes.
 
 Lo esperado es que el binding incremente la performance, previniendo al sistema operativo mover procesos de un core a otro con el fin de balancear la carga.
 
@@ -310,15 +310,15 @@ Como la PC en análisis cuenta con 8 subprocesos pero solamente 4 núcleos, ser�
 \end{figure}
 A primera vista se puede ver que los speedups obtenidos son todos inferiores al mejor speedup obtenido con hasta 4 núcleos.
 
-En los casos de 5 y 6 núcleos casi no hay diferencia entre los distintos tipos de binding, mientras que en el caso de 7 núcleos, dependiendo del tipo de binding se puede obtener hasta un 21% de diferencia. 
+En los casos de 5 y 6 núcleos casi no hay diferencia entre los distintos tipos de binding, mientras que en el caso de 7 u 8 núcleos, dependiendo del tipo de binding se puede obtener hasta un 21\% o 29\% de diferencia respectivamente (!).
 
-En el caso de los 5 núcleos se observa un speedup de entre el 76% y 82%. 
+En el caso de los 5 núcleos se observa un speedup de entre el 76\% y 82\%. 
 
-En el caso de los 6 núcleos el speedup fue menor: en el mejor caso se alcanzó el 67% (peor caso: 62%). 
+En el caso de los 6 núcleos el speedup fue menor: en el mejor caso se alcanzó el 67\% (peor caso: 62\%). 
 
 Con 7 núcleos la variedad de resultados desorienta bastante: en el mejor de los casos, el speedup es casi igual al peor caso de los 5 núcleos (!).
 
-……
+En la corrida con 8 núcleos en el mejor de los casos se llega a empatar el speedup con 6 núcleos, mientras que en el peor caso el speedup es más parecido al speedup obtenido con solamente 2 núcleos que a cualquier otra cosa. Alarmante.
 
 De todas estas mediciones con 5 o más núcleos, se pueden rescatar las siguientes observaciones contraintuitivas: en primer lugar, el máximo speedup fue logrado con 5 núcleos, que es la menor cantidad de la muestra observada. Por otro lado, este speedup es muy similar al speedup obtenido con 3 núcleos, lo que significa que todos los speedups con 5 o más están muy por detrás del speedup obtenido con 4 núcleos.
 
@@ -348,10 +348,34 @@ Lamentablemente el speedup no sigue creciendo a medida que se agregan más núcl
 
 \subsubsection{Jerarquica vs Scotch}
 \begin{figure}[H]
-    \includesvg[svgpath=../res/imgs/]{pc3Scotch}
-    \caption{Speedups de PC 3 con descomposición scotch}
+    \includesvg[svgpath=../res/imgs/]{jerVsScotch}
+    \caption{Speedups de PC 2 con descomposición jerárquica y scotch}
 \end{figure}
 Si bien se pueden observar pequeñas diferencias que en los tres casos favorecen a la descomposición Jerárquica, estas diferencias no son mayores. De todas formas toda la evidencia indica que es mejor trabajar con descomposición Jerárquica.
+
+\subsection{Comparación de bindings}
+\subsubsection{2 núcleos}
+\begin{figure}[H]
+    \includesvg[svgpath=../res/imgs/]{ComparacionDeBindings2cores}
+    \caption{Comparación de bindings con 2 núcleos}
+\end{figure}
+En el caso de computar la solución con dos núcleos, se ve que en ambas máquinas el \texttt{--bind-to none -bycore} es el que da peores resultados. Se puede suponer que esto sucede porque si bien el flag \texttt{-bycore} asegura que los procesos son asignados a núcleos adyacentes, como no se asegura que los mismos vuelvan al mismo procesador en que estaban previamente, termina siendo una combinación fatal: por un lado debe cumplir la condición impuesta por el \texttt{bycore}, pero sin obtener nada a cambio, ya que tranquilamente puede terminar estando en otro procesador.
+
+\subsubsection{3 núcleos}
+\begin{figure}[H]
+    \includesvg[svgpath=../res/imgs/]{ComparacionDeBindings3cores}
+    \caption{Comparación de bindings con 3 núcleos}
+\end{figure}
+En este caso se puede ver que ninguna de las tres configuraciones de flags castiga sistemáticamente el speedup. 
+
+Una posible explicación es la siguiente: todo proceso es desalojado del procesador cada tanto, luego si de 4 posibles núcleos los ocupados con el solver son solamente 2, entonces cada vez que un proceso vuelve al procesador puede volver a uno de 3 restantes (considerando que hay uno solo ocupado dado que se considera que la única tarea grande corriendo en el momento es el solver en el otro núcleo), habiendo una probabilidad igual a 0.33 de volver al mismo núcleo de antes (considerando que el otro solver no fue desalojado mientras). Si, en cambio, se corre el solver en 3 núcleos, realizando un razonamiento análogo se llega a que la probabilidad de volver al mismo núcleo es de 0.5, significativamente mayor. Si bien los números distan de ser correctos por la inmensidad de cuestiones que están involucradas y que son incontrolables e inmedibles, en líneas generales se lo puede considerar útil y representativo.
+
+\subsubsection{4 núcleos}
+\begin{figure}[H]
+    \includesvg[svgpath=../res/imgs/]{ComparacionDeBindings4cores}
+    \caption{Comparación de bindings con 4 núcleos}
+\end{figure}
+Esta figura respalda en cierta forma el análisis realizado en el caso de los 3 núcleos con respecto a la configuración de flags \texttt{--gind-to none -bycore}, de hecho en una de las máquinas fue esta configuración justamente la que dio el speedup óptimo con bastante margen.
 
 \newpage
 \section{Conclusiones}
