@@ -235,7 +235,7 @@ Además se han creado 4 directorios nuevos, cada uno representando a un core dis
 La información a continuación es importante en el caso de querer analizar visualmente la información del problema y su respectiva subdivisión en subproblemas. Es una práctica muy recomendable.\\
 A continuación se ejecutará el comando \texttt{foamToVTK} en cada uno de los directorios de los procesadores, lo cual creará un directorio \texttt{VTK} que contendrá información de los subdominios para ser analizada con \texttt{paraView}.
 
-\begin{figure} 
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{../res/imgs/image8.png}
     \caption{\textbf{El problema elegido} En esta imagen se puede apreciar la geometría del problema elegido: dos líquidos immiscibles en un recipiente, y una burbuja en la parte inferior del mismo.}
@@ -359,10 +359,27 @@ A partir de las mediciones se puede ver que no siempre se cumple que al agregar 
 
 Si bien en la PC 2 se pudo observar un speedup creciente a medida que se iba aumentando la cantidad de núcleos reales, no sucedió lo mismo con la PC 3, donde si bien no se esperaban valores exagerados e irreales que se acerquen demasiado al speedup óptimo teórico, sí se esperaba que aumente por lo menos un poco al agregar más núcleos para el cómputo.
 
+\newpage
 \section{Anexo}
 \subsection{Mediciones}
-\href{https://www.google.com/}{asdf}.
-La hoja de datos con las mediciones junto a los gráficos correspondientes están disponibles para una mejor apreciación en este \href{https://docs.google.com/spreadsheets/d/e/2PACX-1vQOSLYH4y81OxVleLZk2YwzFhrl4-AzE2-IUF04Y9lkk0pP6SZe1VFkkFW7r9lDK-Qo8OkGUuwHFlOE/pubhtml}{link}. 
-% \lstinputlisting[caption={s.c}]{s.c}
-
+La hoja de datos con las mediciones junto a los gráficos correspondientes están disponibles para una mejor apreciación en este \href{https://docs.google.com/spreadsheets/d/e/2PACX-1vQOSLYH4y81OxVleLZk2YwzFhrl4-AzE2-IUF04Y9lkk0pP6SZe1VFkkFW7r9lDK-Qo8OkGUuwHFlOE/pubhtml}{link}\footnote{https://docs.google.com/spreadsheets/d/e/2PACX-1vQOSLYH4y81OxVleLZk2YwzFhrl4-AzE2-IUF04Y9lkk0pP6SZe1VFkkFW7r9lDK-Qo8OkGUuwHFlOE/pubhtml}. 
+\subsection{Código del caso}
+\lstinputlisting[caption={\texttt{0.orig/alpha.water}}, captionpos=b]{../res/depthCharge2d/0.orig/alpha.water}
+\lstinputlisting[caption={\texttt{0.orig/p}}, captionpos=b]{../res/depthCharge2d/0.orig/p}
+\lstinputlisting[caption={\texttt{0.orig/p\_rgh}}, captionpos=b]{../res/depthCharge2d/0.orig/p\_rgh}
+\lstinputlisting[caption={\texttt{0.orig/T}}, captionpos=b]{../res/depthCharge2d/0.orig/T}
+\lstinputlisting[caption={\texttt{0.orig/U}}, captionpos=b]{../res/depthCharge2d/0.orig/U}
+\lstinputlisting[caption={\texttt{constant/g}}, captionpos=b]{../res/depthCharge2d/constant/g}
+\lstinputlisting[caption={\texttt{constant/thermophysicalProperties}}, captionpos=b]{../res/depthCharge2d/constant/thermophysicalProperties}
+\lstinputlisting[caption={\texttt{constant/thermophysicalProperties.air}}, captionpos=b]{../res/depthCharge2d/constant/thermophysicalProperties.air}
+\lstinputlisting[caption={\texttt{constant/thermophysicalProperties.water}}, captionpos=b]{../res/depthCharge2d/constant/thermophysicalProperties.water}
+\lstinputlisting[caption={\texttt{constant/turbulenceProperties}}, captionpos=b]{../res/depthCharge2d/constant/turbulenceProperties}
+\lstinputlisting[caption={\texttt{system/blockMeshDict}}, captionpos=b]{../res/depthCharge2d/system/blockMeshDict}
+\lstinputlisting[caption={\texttt{system/controlDict}}, captionpos=b]{../res/depthCharge2d/system/controlDict}
+\lstinputlisting[caption={\texttt{system/decomposeParDict}}, captionpos=b]{../res/depthCharge2d/system/decomposeParDict}
+\lstinputlisting[caption={\texttt{system/fvSchemes}}, captionpos=b]{../res/depthCharge2d/system/fvSchemes}
+\lstinputlisting[caption={\texttt{system/fvSolution}}, captionpos=b]{../res/depthCharge2d/system/fvSolution}
+\lstinputlisting[caption={\texttt{system/setFieldsDict}}, captionpos=b]{../res/depthCharge2d/system/setFieldsDict}
+\lstinputlisting[caption={\texttt{Allrun}}, captionpos=b]{../res/depthCharge2d/Allrun}
+\lstinputlisting[caption={\texttt{Allclean}}, captionpos=b]{../res/depthCharge2d/Allclean}
 \end{document}
