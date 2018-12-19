@@ -248,7 +248,7 @@ Hay una variedad de factores de hardware que pueden afectar la eficiencia en el 
 
 \newpage
 \section{Casos de estudio}
-El software OpenFOAM incluye en su instalación una enorme cantidad de tutoriales a modo de ejemplo para los usuarios con el fin de demostrar la amplísima gama de problemas que se pueden resolver con el mismo. Debido a la complejidad de este tipo de problemas y por no ser el foco del presente trabajo, se decide trabajar con uno de los tutoriales que utiliza el \textit{compressibleInterFoam solver}, que es un solver para dos fluidos compresibles no isotérmicos e immiscibles usando el volumen del fluido.
+El software OpenFOAM incluye en su instalación una enorme cantidad de tutoriales a modo de ejemplo para los usuarios con el fin de demostrar la amplísima gama de problemas que se pueden resolver con el mismo. Debido a la complejidad de este tipo de problemas y por no ser el foco del presente trabajo, se decide trabajar con uno de los tutoriales que utiliza el \textit{compressibleInterFoam solver}, que es un solver para dos fluidos compresibles no isotérmicos e immiscibles.
 
 Entre las posibilidades de usar el caso 2D y el 3D, se decidió realizar pruebas con el 2D por un tema práctico: el caso 3D es computacionalmente muchísimo más complejo que el 2D, lo que extendería muchísimo el tiempo dedicado a correr el solver en sus distintas configuraciones posibles. Muy probablemente el estudio de los tiempo de ejecución y sus comparaciones serían más vistosos, pero dado el alcance del trabajo, se ha decidido que dicho límite es aceptable.
 
@@ -526,5 +526,17 @@ La hoja de datos con las mediciones junto a los gráficos correspondientes está
         OpenFOAM: \url{https://www.openfoam.com/}.
     \bibitem{}
         MPI FAQ: General run-time tuning: \url{https://www.open-mpi.org/faq/?category=tuning#using-paffinity-v1.4}.
+    \bibitem{}
+        mpirun(1) man page (version 1.5.5): \url{https://www.open-mpi.org/doc/v1.5/man1/mpirun.1.}
+    \bibitem{}
+        Tomasso Lucchini: Running OpenFOAM in parallel \url{http://web.student.chalmers.se/groups/ofw5/Basic_Training/runningInParallelLucchini.pdf}
+    \bibitem{}
+        \url{https://www.cfd-online.com/Forums}
+    \bibitem{}
+        Keough, Shannon: Optimising the Parallelisation of OpenFOAM Simulations. 
+
+        \url{https://apps.dtic.mil/docs/citations/ADA612337}
+    \bibitem{}
+        Kai Hwang: Advanced Computer Architecture: Parallelism, scalability, programability.
 \end{thebibliography}
 \end{document}
