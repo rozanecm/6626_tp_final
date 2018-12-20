@@ -9,3 +9,5 @@ Para acceder al informe, click [aquí](informe/main.pdf). Para acceder al códig
 Para compilar el informe, correr el comando `pdflatex --shell-escape main.tex` desde el dir `informe/`.<br>
 El informe ha sido redactado principalmente en [Google Docs](https://docs.google.com/document/d/1pPbSQEoMV5mqSJGCekVZbzCFUx9gjsncMHm_XzZqfFo/edit#). <br>
 Los datos de las ejecuciones pueden ser accedidos [aquí](https://docs.google.com/spreadsheets/d/e/2PACX-1vQOSLYH4y81OxVleLZk2YwzFhrl4-AzE2-IUF04Y9lkk0pP6SZe1VFkkFW7r9lDK-Qo8OkGUuwHFlOE/pubhtml#).
+# Presentación
+La presentación se encuentra disponible [aquí](https://docs.google.com/presentation/d/e/2PACX-1vS2tqxA5MZYZxRs3CEii9WX1nipQGBWkdJxGh3_vW_BlwDMOSgg8EtB1VeIOA9AoiRuWGVhZ6_cJKvs/pub?start=true&loop=false&delayms=3000).
