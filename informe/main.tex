@@ -493,6 +493,15 @@ Una posible explicación es la siguiente: todo proceso es desalojado del procesa
 Esta figura respalda en cierta forma el análisis realizado en el caso de los 3 núcleos con respecto a la configuración de flags \texttt{--gind-to none -bycore}, de hecho en una de las máquinas fue esta configuración justamente la que dio el speedup óptimo con bastante margen.
 
 \newpage
+\section{Lecciones aprendidas}
+Durante el transcurso del trabajo práctico se aprendió a relacionar los conceptos estudiados en las clases teóricas en un problema aplicado a la vida real, si bien los recursos de hardware para implementar pruebas de paralelismo son elevados, con lo disponible se pudo probar las hipótesis deseadas.
+
+El primer desafío fue encontrar qué problema resolver. En un principio pensamos en problemas NP-completos: el tiempo de cómputo aumentaría rápidamente con solamente agregar algunas variables, y esto haría muy notorio el beneficio de poder sumar unidades de cómputo. Sin embargo, si bien muchos de los problemas np completos son fácilmente paralelizables, no tendría mucho sentido estudiarlos debido a que aún contando con recursos ideales, se llega rápidamente a un tope práctico. 
+
+Siguiendo con la búsqueda nos encontramos con esta herramienta, la cual el profesor confirmó que cumplía con lo solicitado: enfrentar un problema de la vida real y lograr una paralelización. Luego nos encontramos con desafíos en cuanto a la documentación para comprender y estudiar el dominio del problema, tanto de fluidos como de paralelismo. Finalmente, tras varios intentos de generar un sistema distribuido, la poca documentación encontrada con respecto a esto dificulto su ejecución, con lo cual lo se abarcó a este desde un punto de vista teórico.
+
+Realizar mediciones y estudiar el speedup en términos experimentales también fue una tarea nueva, la cual en términos prácticos nunca habíamos realizado; por estas razones consideramos al trabajo realizado de gran aporte en material de estudio en el transcurso de nuestra carrera.
+\newpage
 \section{Conclusiones}
 A partir de las mediciones se puede ver que no siempre se cumple que al agregar más procesadores aumenta el speedup. Esto tiene que ver con cuestiones planteadas al principio del trabajo: el costo comunicacional consume tiempo, y si bien es subconscientemente subestimado debido a que el enfoque está en la parte computacional, termina siendo evidente que no es un tema menor. 
 
